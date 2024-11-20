@@ -1,14 +1,15 @@
 import 'package:card_settings/domain/model/card_model.dart';
 import 'package:card_settings/presentation/manager/card_settings/card_settings_event.dart';
 import 'package:card_settings/presentation/widgets/card/payment_card.dart';
+import 'package:card_settings/presentation/widgets/dialog/color_picker_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../manager/card_settings/card_settings_bloc.dart';
 import '../manager/card_settings/card_settings_state.dart';
 import '../widgets/button/button.dart';
+import '../widgets/dialog/gradient_picker_bottom_sheet.dart';
 
 class CardSettingsScreen extends StatefulWidget {
   final int cardIndex;
@@ -28,6 +29,12 @@ class _CardSettingsScreenState extends State<CardSettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context, false);
+          },
+            child: const Icon(Icons.arrow_back_ios)
+        ),
         title: Text(
           '${widget.cardIndex + 1} Card settings',
           style: const TextStyle(
@@ -57,11 +64,15 @@ class _CardSettingsScreenState extends State<CardSettingsScreen> {
                         cardModel: CardModel(
                             controller: state.controller,
                             userChooseColor: state.userChooseColor,
+                            userChooseGradient: state.userChooseGradient,
                             userChooseImage: state.userChooseImage,
                             isLocked: state.isLocked,
                             isSettings: state.isSettings,
                             selectedImagePath: state.selectedImagePath,
-                            backgroundColor: state.backgroundColor
+                            backgroundColor: state.backgroundColor,
+                            startColor: state.startColor,
+                            endColor: state.endColor,
+                            matrix: state.controller.value.storage.toList(),
                         )
                     ),
 
@@ -100,55 +111,15 @@ class _CardSettingsScreenState extends State<CardSettingsScreen> {
                               fontSize: 12,
                               text: 'Choose color',
                               onTap: () {
-                                Color tempColor = state.backgroundColor;
                                 showDialog(
                                   context: context,
                                   builder: (dialogContext) {
-                                    return AlertDialog(
-                                      title: Text(
-                                          'Choose color',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600
-                                        ),
-                                      ),
-                                      backgroundColor: Colors.white,
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SingleChildScrollView(
-                                            child: ColorPicker(
-                                              pickerColor: tempColor,
-                                              onColorChanged: (color) {
-                                                tempColor = color;
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(dialogContext),
-                                          child: Text(
-                                              'Cancel',
-                                            style: TextStyle(
-                                              color: Colors.grey[700]
-                                            ),
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            context.read<CardSettingsBloc>()
-                                            .add(ChooseColorFromPick(backgroundColor: tempColor));
-                                            Navigator.pop(dialogContext);
-                                          },
-                                          child: const Text(
-                                              'Choose',
-                                            style: TextStyle(
-                                                color: Colors.black
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                    return ColorPickerDialog(
+                                      initialColor: state.backgroundColor,
+                                      onColorSelected: (color) {
+                                        context.read<CardSettingsBloc>()
+                                            .add(ChooseColorFromPick(backgroundColor: color));
+                                      },
                                     );
                                   },
                                 );
@@ -160,15 +131,34 @@ class _CardSettingsScreenState extends State<CardSettingsScreen> {
 
                         Expanded(
                           child: Button(
-                              width: double.maxFinite,
-                              height: 48,
-                              fontSize: 12,
-                              text: 'Choose gradient',
-                              onTap: () {
-
-                              }
+                            width: double.maxFinite,
+                            height: 48,
+                            fontSize: 12,
+                            text: 'Choose gradient',
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                                ),
+                                builder: (BuildContext dialogContext) {
+                                  return GradientPickerBottomSheet(
+                                    onGradientSelected: (startColor, endColor) {
+                                      context.read<CardSettingsBloc>().add(
+                                        ChooseGradientColors(
+                                          startColor: startColor,
+                                          endColor: endColor,
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
                           ),
                         )
+
                       ],
                     ),
 
@@ -193,3 +183,5 @@ class _CardSettingsScreenState extends State<CardSettingsScreen> {
     );
   }
 }
+
+

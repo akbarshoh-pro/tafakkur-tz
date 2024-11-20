@@ -22,6 +22,19 @@ class PaymentCard extends StatelessWidget {
               height: 200,
               color: cardModel.backgroundColor,
             ),
+          if (cardModel.userChooseGradient)
+            Container(
+              width: double.infinity,
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [cardModel.startColor, cardModel.endColor], // You can use any two colors here
+                ),
+              ),
+            ),
+
           if (cardModel.userChooseImage)
             InteractiveViewer(
               transformationController: cardModel.controller,

@@ -70,6 +70,7 @@ class _CardsListScreenState extends State<CardsListScreen> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () async {
+                          print(state.cardsList[0].controller.value);
                           final res = await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -79,11 +80,15 @@ class _CardsListScreenState extends State<CardsListScreen> {
                                         ..add(SetValues(cardModel: CardModel(
                                             controller: state.cardsList[index].controller,
                                             userChooseColor: state.cardsList[index].userChooseColor,
+                                            userChooseGradient: state.cardsList[index].userChooseGradient,
                                             userChooseImage: state.cardsList[index].userChooseImage,
-                                            isLocked: state.cardsList[index].isLocked,
+                                            isLocked: false,
                                             isSettings: true,
                                             selectedImagePath: state.cardsList[index].selectedImagePath,
-                                            backgroundColor: state.cardsList[index].backgroundColor
+                                            backgroundColor: state.cardsList[index].backgroundColor,
+                                            startColor: state.cardsList[index].startColor,
+                                            endColor: state.cardsList[index].endColor,
+                                            matrix: state.cardsList[index].controller.value.storage.toList(),
                                         ))),
                                         child: CardSettingsScreen(
                                             cardIndex: index),

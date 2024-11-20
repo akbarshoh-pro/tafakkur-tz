@@ -4,7 +4,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../domain/model/card_model.dart';
 import '../card_entity.dart';
-import '../matrix_4.g.dart';
 
 abstract class HiveHelper {
   static late Box cardBox;
@@ -14,24 +13,27 @@ abstract class HiveHelper {
     Hive.init(directory.path);
 
     Hive.registerAdapter(CardEntityAdapter());
-    Hive.registerAdapter(Matrix4Adapter());
 
     cardBox = await Hive.openBox("card_box");
 
-    if(cardBox.isEmpty) {
+    if (cardBox.isEmpty) {
       final cardsList = [
         CardEntity(
-            matrix4: Matrix4.identity(),
-            userChooseColor: false,
-            userChooseImage: true,
-            isLocked: true,
-            isSettings: false,
-            selectedImagePath: 'assets/images/image1.png',
-            backgroundColor: 0xFF000000
+          userChooseColor: false,
+          userChooseGradient: false,
+          userChooseImage: true,
+          isLocked: true,
+          isSettings: false,
+          selectedImagePath: 'assets/images/image1.png',
+          backgroundColor: 0xFF000000,
+          startColor: 0xFF000000,
+          endColor: 0xFF000000,
+          matrix: Matrix4.identity().storage.toList(),
         )
       ];
       cardBox.put("cardsList", cardsList);
     }
+
   }
 
 
@@ -40,21 +42,22 @@ abstract class HiveHelper {
 
     return rawList.cast<CardEntity>();
   }
-
   static Future<void> updateCardsList(CardModel cardModel) async {
     final newList = [
       CardEntity(
-          matrix4: cardModel.controller.value,
-          userChooseColor: cardModel.userChooseColor,
-          userChooseImage: cardModel.userChooseImage,
-          isLocked: cardModel.isLocked,
-          isSettings: cardModel.isSettings,
-          selectedImagePath: cardModel.selectedImagePath,
-          backgroundColor: cardModel.backgroundColor.value
+        userChooseColor: cardModel.userChooseColor,
+        userChooseGradient: cardModel.userChooseGradient,
+        userChooseImage: cardModel.userChooseImage,
+        isLocked: cardModel.isLocked,
+        isSettings: cardModel.isSettings,
+        selectedImagePath: cardModel.selectedImagePath,
+        backgroundColor: cardModel.backgroundColor.value,
+        startColor: cardModel.startColor.value,
+        endColor: cardModel.endColor.value,
+        matrix: cardModel.matrix,
       )
     ];
 
     cardBox.put("cardsList", newList);
   }
-
 }

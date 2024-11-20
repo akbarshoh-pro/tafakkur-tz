@@ -10,12 +10,15 @@ import 'card_settings_state.dart';
 class CardSettingsBloc extends Bloc<CardSettingsEvent, CardSettingsState> {
   CardSettingsBloc() : super(CardSettingsState(
       controller: TransformationController(),
-      userChooseImage: true,
       userChooseColor: false,
+      userChooseGradient: false,
+      userChooseImage: true,
       isLocked: false,
       isSettings: true,
       selectedImagePath: "assets/images/image1.png",
       backgroundColor: const Color(0xff000000),
+      startColor: const Color(0xff000000),
+      endColor: const Color(0xff000000),
       saveSuccess: false
   )) {
     final AppRepository repo = AppRepositoryImpl();
@@ -27,13 +30,26 @@ class CardSettingsBloc extends Bloc<CardSettingsEvent, CardSettingsState> {
           controller: controller,
           selectedImagePath: event.selectedImagePath,
           userChooseColor: false,
+          userChooseGradient: false,
           userChooseImage: true,
           isLocked: event.isLocked
       ));
     });
+
     on<ChooseColorFromPick>((event, emit) {
       emit(state.copyWith(
           backgroundColor: event.backgroundColor,
+          userChooseColor: true,
+          userChooseGradient: false,
+          userChooseImage: false
+      ));
+    });
+
+    on<ChooseGradientColors>((event, emit) {
+      emit(state.copyWith(
+          startColor: event.startColor,
+          endColor: event.endColor,
+          userChooseGradient: true,
           userChooseColor: true,
           userChooseImage: false
       ));
@@ -42,30 +58,39 @@ class CardSettingsBloc extends Bloc<CardSettingsEvent, CardSettingsState> {
     on<SetValues>((event, emit) {
       emit(state.copyWith(
           controller: event.cardModel.controller,
-          userChooseImage: event.cardModel.userChooseImage,
           userChooseColor: event.cardModel.userChooseColor,
-        isLocked: event.cardModel.isLocked,
-        isSettings: event.cardModel.isSettings,
-        selectedImagePath: event.cardModel.selectedImagePath,
-        backgroundColor: event.cardModel.backgroundColor
+          userChooseGradient: event.cardModel.userChooseGradient,
+          userChooseImage: event.cardModel.userChooseImage,
+          isLocked: event.cardModel.isLocked,
+          isSettings: event.cardModel.isSettings,
+          selectedImagePath: event.cardModel.selectedImagePath,
+          backgroundColor: event.cardModel.backgroundColor,
+          startColor: event.cardModel.startColor,
+          endColor: event.cardModel.endColor
       ));
     });
 
     on<SaveAllUpdates>((event, emit) async {
-      print(state.controller.value);
+      final currentMatrix = state.controller.value.storage;
+
       await repo.updateCardsList(
         CardModel(
-            controller: state.controller,
-            userChooseColor: state.userChooseColor,
-            userChooseImage: state.userChooseImage,
-            isLocked: state.isLocked,
-            isSettings: state.isSettings,
-            selectedImagePath: state.selectedImagePath,
-            backgroundColor: state.backgroundColor
-        )
+          controller: state.controller,
+          userChooseColor: state.userChooseColor,
+          userChooseGradient: state.userChooseGradient,
+          userChooseImage: state.userChooseImage,
+          isLocked: state.isLocked,
+          isSettings: state.isSettings,
+          selectedImagePath: state.selectedImagePath,
+          backgroundColor: state.backgroundColor,
+          startColor: state.startColor,
+          endColor: state.endColor,
+          matrix: currentMatrix.toList(),
+        ),
       );
 
       emit(state.copyWith(saveSuccess: true));
     });
+
   }
 }

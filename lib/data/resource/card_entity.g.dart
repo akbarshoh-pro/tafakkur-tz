@@ -8,7 +8,7 @@ part of 'card_entity.dart';
 
 class CardEntityAdapter extends TypeAdapter<CardEntity> {
   @override
-  final int typeId = 1;
+  final int typeId = 0;
 
   @override
   CardEntity read(BinaryReader reader) {
@@ -17,34 +17,43 @@ class CardEntityAdapter extends TypeAdapter<CardEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CardEntity(
-      matrix4: fields[1] as Matrix4,
-      userChooseColor: fields[3] as bool,
+      userChooseColor: fields[0] as bool,
+      userChooseGradient: fields[1] as bool,
       userChooseImage: fields[2] as bool,
-      isLocked: fields[4] as bool,
-      isSettings: fields[5] as bool,
-      selectedImagePath: fields[6] as String,
-      backgroundColor: fields[7] as int,
+      isLocked: fields[3] as bool,
+      isSettings: fields[4] as bool,
+      selectedImagePath: fields[5] as String,
+      backgroundColor: fields[6] as int,
+      startColor: fields[7] as int,
+      endColor: fields[8] as int,
+      matrix: (fields[9] as List).cast<double>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CardEntity obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(10)
+      ..writeByte(0)
+      ..write(obj.userChooseColor)
       ..writeByte(1)
-      ..write(obj.matrix4)
+      ..write(obj.userChooseGradient)
       ..writeByte(2)
       ..write(obj.userChooseImage)
       ..writeByte(3)
-      ..write(obj.userChooseColor)
-      ..writeByte(4)
       ..write(obj.isLocked)
-      ..writeByte(5)
+      ..writeByte(4)
       ..write(obj.isSettings)
-      ..writeByte(6)
+      ..writeByte(5)
       ..write(obj.selectedImagePath)
+      ..writeByte(6)
+      ..write(obj.backgroundColor)
       ..writeByte(7)
-      ..write(obj.backgroundColor);
+      ..write(obj.startColor)
+      ..writeByte(8)
+      ..write(obj.endColor)
+      ..writeByte(9)
+      ..write(obj.matrix);
   }
 
   @override

@@ -31,3 +31,13 @@ class SetValues extends CardSettingsEvent {
 }
 
 class SaveAllUpdates extends CardSettingsEvent {}
+
+class ChooseGradientColors extends CardSettingsEvent {
+  final Color startColor;
+  final Color endColor;
+
+  ChooseGradientColors({
+    required this.startColor,
+    required this.endColor
+  });
+}
