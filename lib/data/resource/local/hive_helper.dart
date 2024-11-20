@@ -16,7 +16,7 @@ abstract class HiveHelper {
     Hive.registerAdapter(CardEntityAdapter());
     Hive.registerAdapter(Matrix4Adapter());
 
-    cardBox = await Hive.openBoxc("card_box");
+    cardBox = await Hive.openBox("card_box");
 
     if(cardBox.isEmpty) {
       final cardsList = [
