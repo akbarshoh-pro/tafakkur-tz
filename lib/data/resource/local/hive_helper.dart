@@ -19,9 +19,9 @@ abstract class HiveHelper {
     if (cardBox.isEmpty) {
       final cardsList = [
         CardEntity(
-          userChooseColor: false,
+          userChooseColor: true,
           userChooseGradient: false,
-          userChooseImage: true,
+          userChooseImage: false,
           isLocked: true,
           isSettings: false,
           selectedImagePath: 'assets/images/image1.png',

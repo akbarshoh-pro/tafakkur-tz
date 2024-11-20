@@ -48,11 +48,13 @@ class _CardsListScreenState extends State<CardsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'My cards',
-          style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w600
+        title: const Center(
+          child: Text(
+            'My cards',
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600
+            ),
           ),
         ),
         backgroundColor: Colors.white,

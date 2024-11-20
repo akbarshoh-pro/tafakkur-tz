@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../../domain/model/card_model.dart';
@@ -42,8 +44,8 @@ class PaymentCard extends StatelessWidget {
               scaleEnabled: !cardModel.isLocked,
               minScale: 0.5,
               maxScale: 10.0,
-              child: Image.asset(
-                cardModel.selectedImagePath,
+              child: Image.file(
+                File(cardModel.selectedImagePath),
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 200,
